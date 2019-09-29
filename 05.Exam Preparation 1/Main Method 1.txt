@@ -1,0 +1,130 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+
+public class Program
+{
+    public static Dictionary<int, Car> allCars = new Dictionary<int, Car>();
+    public static Dictionary<int, Race> allRaces = new Dictionary<int, Race>();
+
+    public static void Main()
+    {
+        //var allCars = new Dictionary<int,Car>();
+
+        while (true)
+        {
+            var input = Console.ReadLine();
+            if (input == "Cops Are Here")
+            {
+                break;
+            }
+            var tokens = input.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+            var command = tokens[0];
+            switch (command)
+            {
+                case "register":
+                    Register(tokens);
+                    break;
+                case "check":
+                    Check(tokens[1]);
+                    break;
+                case "open":
+                    Open(tokens);
+                    break;
+                case "participate":
+                    var carId = int.Parse(tokens[1]);
+                    var raceId = int.Parse(tokens[2]);
+                    allRaces[raceId].AddCarsToRace(allCars[carId]);
+                    break;
+                case "start":
+                    var id = tokens[1];
+                    StartRace(id);
+                    break;
+            }
+        }
+
+
+    }
+
+    private static void StartRace(string idAsString)
+    {
+        var id = int.Parse(idAsString);
+        foreach (Race race in allRaces.Values)
+        {
+            
+            if (race.Type == "Casual")
+            {
+                race.Participants.OrderByDescending()
+            }
+            else if (race.Type == "Drag")
+            {
+                foreach (Car car in race.Participants)
+                {
+
+                }
+            }
+
+        }
+    }
+
+    private static void Open(string[] tokens)
+    {
+        var id = int.Parse(tokens[1]);
+        var type = tokens[2];
+        var length = int.Parse(tokens[3]);
+        var route = tokens[4];
+        var prizePool = int.Parse(tokens[5]);
+
+        switch (type)
+        {
+            case "Casual":
+                var casualRace = new CasualRace(length, route, prizePool, new List<Car>(), type);
+                allRaces.Add(id, casualRace);
+                break;
+            case "Drag":
+                var dragRace = new DragRace(length, route, prizePool, new List<Car>(), type);
+                allRaces.Add(id, dragRace);
+                break;
+            case "Drift":
+                var driftRace = new DriftRace(length, route, prizePool, new List<Car>(), type);
+                allRaces.Add(id, driftRace);
+                break;
+        }
+    }
+
+    private static void Check(string idAsString)
+    {
+        var id = int.Parse(idAsString);
+        var car = allCars[id];
+        Console.WriteLine(car.ToString());
+    }
+
+    private static void Register(string[] tokens)
+    {
+        var id = int.Parse(tokens[1]);
+        var type = tokens[2];
+        var brand = tokens[3];
+        var model = tokens[4];
+        var year = int.Parse(tokens[5]);
+        var horsepower = int.Parse(tokens[6]);
+        var acceleration = int.Parse(tokens[7]);
+        var suspension = int.Parse(tokens[8]);
+        var durability = int.Parse(tokens[9]);
+
+        if (type == "Performance")
+        {
+            var performanceCar = new PerformanceCar(brand, model, year, horsepower, acceleration, suspension, durability);
+            allCars.Add(id, performanceCar);
+        }
+        else
+        {
+            var showCar = new ShowCar(brand, model, year, horsepower, acceleration, suspension, durability);
+            allCars.Add(id, showCar);
+        }
+
+    }
+}
